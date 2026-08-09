@@ -27,6 +27,14 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
         alpha: 1
     )
 
+    /// Completed-state green (#46B065).
+    private static let completedGreen = NSColor(
+        calibratedRed: 0x46 / 255,
+        green: 0xB0 / 255,
+        blue: 0x65 / 255,
+        alpha: 1
+    )
+
     private let monitor = SessionLogWatcher(
         sessionsDirectory: URL(fileURLWithPath: NSHomeDirectory() + "/.codex/sessions"),
         staleAfter: Settings.staleAfter,
@@ -129,7 +137,7 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
             tint = .systemOrange
         case .completed:
             label = "完成"
-            tint = .systemGreen
+            tint = Self.completedGreen
         case .interrupted:
             label = "中断"
             tint = .systemRed
