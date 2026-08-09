@@ -67,11 +67,10 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem.button {
             button.font = NSFont.menuBarFont(ofSize: 13)
-            button.image = makeDotImage(diameter: 13)
+            button.image = makeDotImage(diameter: 13, color: .secondaryLabelColor, alpha: 1.0)
             button.imagePosition = .imageLeading
             button.imageHugsTitle = true
             button.attributedTitle = labelAttributedTitle("空闲")
-            button.contentTintColor = .secondaryLabelColor
         }
 
         let menu = NSMenu()
@@ -297,9 +296,10 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
         )
     }
 
-    /// A filled circle used as the menu bar status "light". Rendered as a
-    /// template image so `contentTintColor` tints it (and adapts to dark mode).
-    private func makeDotImage(diameter: CGFloat) -> NSImage? {
+    /// A filled circle used as the menu bar status "light", painted directly
+    /// with the status color (template + contentTintColor does not reliably
+    /// tint plain bitmap images on the status bar).
+    private func makeDotImage(diameter: CGFloat, color: NSColor, alpha: CGFloat) -> NSImage? {
         let side = Int(ceil(diameter))
         guard let rep = NSBitmapImageRep(
             bitmapDataPlanes: nil,
@@ -320,18 +320,17 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
         defer { NSGraphicsContext.restoreGraphicsState() }
         let inset = diameter * 0.08
         let rect = CGRect(x: inset, y: inset, width: diameter - inset * 2, height: diameter - inset * 2)
-        context.cgContext.setFillColor(NSColor.black.cgColor)
+        context.cgContext.setFillColor(color.withAlphaComponent(alpha).cgColor)
         context.cgContext.fillEllipse(in: rect)
         let image = NSImage(size: NSSize(width: diameter, height: diameter))
         image.addRepresentation(rep)
-        image.isTemplate = true
         return image
     }
 
     private func applyAppearance() {
         guard let button = statusItem?.button else { return }
         button.attributedTitle = labelAttributedTitle(currentLabel)
-        button.contentTintColor = currentTint.withAlphaComponent(currentDotAlpha)
+        button.image = makeDotImage(diameter: 13, color: currentTint, alpha: currentDotAlpha)
     }
 
     // MARK: - Breathing dot
