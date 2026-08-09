@@ -19,6 +19,14 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var pulseTimer: Timer?
     private var pulseStart: Date?
 
+    /// International Klein Blue (#002FA7), used for the "thinking" status dot.
+    private static let kleinBlue = NSColor(
+        calibratedRed: 0,
+        green: 47 / 255,
+        blue: 167 / 255,
+        alpha: 1
+    )
+
     private let monitor = SessionLogWatcher(
         sessionsDirectory: URL(fileURLWithPath: NSHomeDirectory() + "/.codex/sessions"),
         staleAfter: Settings.staleAfter,
@@ -115,7 +123,7 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
             tint = .secondaryLabelColor
         case .working:
             label = "思考中"
-            tint = .systemBlue
+            tint = Self.kleinBlue
         case .stalled:
             label = "无活动"
             tint = .systemOrange
