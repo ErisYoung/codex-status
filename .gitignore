@@ -1,0 +1,8 @@
+.DS_Store
+.build/
+*.log
+
+# Third-party brand asset copied from the local ChatGPT app; not published.
+# make_icon.swift falls back to a generated icon when this is missing.
+Assets/AppIcon-source.png
+Assets/AppIcon.iconset/
